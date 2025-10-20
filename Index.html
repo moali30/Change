@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)file:///C:/Users/mm/Documents/new%201.html -->
+<html lang="ar" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة مقارنة النصوص مع Gemini</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./أداة مقارنة النصوص مع Gemini_files/css2" rel="stylesheet">
+    <style>
+        /* --- التصميم العام للصفحة --- */
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Aligns content to the top */
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        
+        /* --- قسم مفتاح API --- */
+        .api-key-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .api-key-section label {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .api-key-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+
+        #apiKeyInput {
+            flex-grow: 1;
+            max-width: 450px;
+            padding: 8px 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        #apiKeyInput::placeholder {
+            color: #aaa;
+        }
+        
+        #saveApiKeyBtn {
+            padding: 8px 20px;
+            font-size: 1rem;
+            background: #6c757d;
+            border-radius: 6px;
+            box-shadow: none;
+        }
+         #saveApiKeyBtn:hover {
+            background: #5a6268;
+        }
+
+
+        /* --- تصميم مناطق إدخال النص --- */
+        .text-areas {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .text-area-container {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 1rem;
+            border: 1px solid #dcdfe6;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        /* --- تصميم أزرار التحكم --- */
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #compareBtn {
+            background: linear-gradient(135deg, #4a90e2, #50e3c2);
+        }
+        
+        .gemini-btn {
+             background: linear-gradient(135deg, #8e44ad, #9b59b6);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        /* --- تصميم منطقة النتائج --- */
+        .result-section {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        #result {
+            border: 1px solid #e0e0e0;
+            background-color: #fcfcfc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-height: 100px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .diff-added {
+            background-color: #d4edda;
+            color: #155724;
+            text-decoration: none;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .diff-deleted {
+            background-color: #f8d7da;
+            color: #721c24;
+            text-decoration: line-through;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* --- قسم Gemini --- */
+        #gemini-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        
+        #gemini-section h3 {
+            color: #8e44ad;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8e44ad;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Modal/Alert مخصص --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content button {
+            margin-top: 1rem;
+            background: #4a90e2;
+            border-radius: 8px;
+        }
+        
+        /* --- تصميم متجاوب --- */
+        @media (max-width: 768px) {
+            .text-areas {
+                flex-direction: column;
+            }
+            .container {
+                padding: 1.5rem;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>أداة مقارنة النصوص</h1>
+
+        <div class="api-key-section">
+            <label for="apiKeyInput">مفتاح Gemini API الخاص بك</label>
+            <div class="api-key-input-wrapper">
+                <input type="password" id="apiKeyInput" placeholder="أدخل مفتاح الواجهة البرمجية هنا...">
+                <button id="saveApiKeyBtn">حفظ المفتاح</button>
+            </div>
+        </div>
+
+        <div class="text-areas">
+            <div class="text-area-container">
+                <label for="text1">النص الأصلي (النص الأول)</label>
+                <textarea id="text1" placeholder="أدخل النص الأول هنا..."></textarea>
+            </div>
+            <div class="text-area-container">
+                <label for="text2">النص الجديد (النص الثاني)</label>
+                <textarea id="text2" placeholder="أدخل النص الثاني هنا..."></textarea>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="compareBtn">قارن النصّين</button>
+            <button id="improveBtn" class="gemini-btn">✨ تحسين النص الثاني</button>
+        </div>
+        
+        <div class="result-section">
+            <h2>النتيجة</h2>
+            <div id="result"></div>
+        </div>
+        
+        <div id="gemini-section" style="display: none;">
+             <div class="controls">
+                <button id="summarizeBtn" class="gemini-btn">✨ تلخيص التغييرات</button>
+            </div>
+            <h3>تحليل Gemini ✨</h3>
+            <div id="gemini-result" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <p id="custom-alert-message"></p>
+            <button id="custom-alert-close">حسنًا</button>
+        </div>
+    </div>
+
+    <script>
+        // --- الربط مع عناصر الصفحة ---
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+        const text1Input = document.getElementById('text1');
+        const text2Input = document.getElementById('text2');
+        const compareBtn = document.getElementById('compareBtn');
+        const resultDiv = document.getElementById('result');
+        
+        // Gemini Elements
+        const improveBtn = document.getElementById('improveBtn');
+        const summarizeBtn = document.getElementById('summarizeBtn');
+        const geminiSection = document.getElementById('gemini-section');
+        const geminiResultDiv = document.getElementById('gemini-result');
+
+        // Modal Elements
+        const customAlert = document.getElementById('custom-alert');
+        const customAlertMessage = document.getElementById('custom-alert-message');
+        const customAlertClose = document.getElementById('custom-alert-close');
+        
+        // --- إضافة مستمعي الأحداث ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+        });
+
+        saveApiKeyBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('geminiApiKey', key);
+                showAlert('تم حفظ المفتاح بنجاح في متصفحك!');
+            } else {
+                showAlert('الرجاء إدخال مفتاح صالح.');
+            }
+        });
+
+        compareBtn.addEventListener('click', () => {
+            const diffResult = diff(text1Input.value, text2Input.value);
+            displayDiff(diffResult);
+        });
+
+        improveBtn.addEventListener('click', handleImproveText);
+        summarizeBtn.addEventListener('click', handleSummarizeChanges);
+        customAlertClose.addEventListener('click', () => {
+            customAlert.style.display = 'none';
+        });
+
+        /**
+         * Makes an API call to Gemini with exponential backoff for retries.
+         * @param {string} prompt The prompt to send to the model.
+         * @param {number} maxRetries Maximum number of retries.
+         * @returns {Promise<string|null>} The generated text from the model, or null if key is missing.
+         */
+        async function callGeminiAPI(prompt, maxRetries = 3) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                showAlert('الرجاء إدخال مفتاح Gemini API وحفظه أولاً.');
+                return null;
+            }
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            let attempt = 0;
+            let delay = 1000;
+
+            while (attempt < maxRetries) {
+                try {
+                    const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 || response.status >= 500) {
+                            throw new Error(`API Error with status ${response.status}`);
+                        } else {
+                            const errorResult = await response.json();
+                            console.error("API client error:", errorResult);
+                            return `حدث خطأ أثناء الاتصال بالواجهة البرمجية: ${errorResult.error?.message || 'Unknown Error'}`;
+                        }
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text) {
+                        return text;
+                    } else {
+                        console.error("Unexpected API response structure:", result);
+                        return 'لم يتمكن النموذج من إنشاء رد. الرجاء المحاولة مرة أخرى.';
+                    }
+
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed:`, error);
+                    attempt++;
+                    if (attempt >= maxRetries) {
+                        return 'فشلت جميع محاولات الاتصال بالواجهة البرمجية. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            return 'حدث خطأ غير متوقع.';
+        }
+        
+        // All other functions (showAlert, showLoader, setButtonsDisabled, handleImproveText, handleSummarizeChanges, diff, displayDiff) remain the same...
+
+        function showAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlert.style.display = 'flex';
+        }
+
+        function showLoader(element) {
+            element.innerHTML = '<div class="loader"></div>';
+        }
+
+        function setButtonsDisabled(isDisabled) {
+            compareBtn.disabled = isDisabled;
+            improveBtn.disabled = isDisabled;
+            summarizeBtn.disabled = isDisabled;
+        }
+
+        async function handleImproveText() {
+            const textToImprove = text2Input.value;
+            if (!textToImprove.trim()) {
+                showAlert('الرجاء إدخال نص في المربع الثاني لتحسينه.');
+                return;
+            }
+
+            setButtonsDisabled(true);
+            const originalText = text2Input.value;
+            text2Input.value = '✨ يتم الآن تحسين النص بواسطة Gemini...';
+            
+            const prompt = `You are an expert English editor. Review and proofread the following English text. Correct any spelling and grammar mistakes, and improve the style and clarity. Return only the improved text without any introductions or notes.\n\nOriginal Text:\n"${textToImprove}"`;
+            const improvedText = await callGeminiAPI(prompt);
+            
+            if (improvedText === null) { // Check for missing API key
+                text2Input.value = originalText;
+                setButtonsDisabled(false);
+                return;
+            }
+
+            if (improvedText.startsWith('فشل') || improvedText.startsWith('حدث') || improvedText.startsWith('لم يتمكن')) {
+                text2Input.value = originalText;
+                showAlert(improvedText);
+            } else {
+                text2Input.value = improvedText;
+            }
+            setButtonsDisabled(false);
+        }
+
+        async function handleSummarizeChanges() {
+            const text1 = text1Input.value;
+            const text2 = text2Input.value;
+
+            if (!text1.trim() || !text2.trim()) {
+                showAlert('يجب أن يكون كلا النصين موجودين لتلخيص التغييرات.');
+                return;
+            }
+
+            setButtonsDisabled(true);
+            showLoader(geminiResultDiv);
+            
+            const prompt = `You are a precise analyst. Given the original English text and the revised version, provide a concise, point-by-point summary of the main changes made. Focus on the substance of the edits, not just on the words added or deleted.\n\nOriginal Text:\n---\n${text1}\n---\n\nRevised Text:\n---\n${text2}\n---`;
+            const summary = await callGeminiAPI(prompt);
+            
+            if (summary === null) { // Check for missing API key
+                geminiResultDiv.innerHTML = '';
+                setButtonsDisabled(false);
+                return;
+            }
+
+            geminiResultDiv.innerText = summary;
+            setButtonsDisabled(false);
+        }
+
+        function diff(oldText, newText) {
+            const oldWords = oldText.trim().split(/\s+/).filter(Boolean);
+            const newWords = newText.trim().split(/\s+/).filter(Boolean);
+            const n = oldWords.length;
+            const m = newWords.length;
+            const dp = Array(n + 1).fill(null).map(() => Array(m + 1).fill(0));
+
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= m; j++) {
+                    if (oldWords[i - 1] === newWords[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            const result = [];
+            let i = n, j = m;
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && oldWords[i - 1] === newWords[j - 1]) {
+                    result.push({ value: oldWords[i - 1], type: 'unchanged' });
+                    i--; j--;
+                } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+                    result.push({ value: newWords[j - 1], type: 'added' });
+                    j--;
+                } else if (i > 0 && (j === 0 || dp[i][j - 1] < dp[i - 1][j])) {
+                    result.push({ value: oldWords[i - 1], type: 'deleted' });
+                    i--;
+                }
+            }
+            return result.reverse();
+        }
+        
+        function displayDiff(diffResult) {
+            resultDiv.innerHTML = '';
+            geminiSection.style.display = 'none';
+            geminiResultDiv.innerHTML = '';
+
+            if (diffResult.length === 0) {
+                resultDiv.textContent = 'النصان متطابقان أو فارغان.';
+                return;
+            }
+
+            geminiSection.style.display = 'block';
+            const fragment = document.createDocumentFragment();
+
+            diffResult.forEach(item => {
+                const span = document.createElement('span');
+                span.textContent = item.value + ' ';
+                if (item.type === 'added') span.className = 'diff-added';
+                if (item.type === 'deleted') span.className = 'diff-deleted';
+                fragment.appendChild(span);
+});
+            resultDiv.appendChild(fragment);
+        }
+    </script>
+
+
+
+</body></html>
